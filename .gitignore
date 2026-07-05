@@ -1,0 +1,5 @@
+git init
+echo "__pycache__/" >> .gitignore
+echo ".ipynb_checkpoints/" >> .gitignore
+echo "scns_env/" >> .gitignore
+echo "chroma_db/" >> .gitignore
