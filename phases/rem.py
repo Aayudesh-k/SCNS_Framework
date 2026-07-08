@@ -11,7 +11,7 @@ class REMPhase:
         
         if api_key:
             genai.configure(api_key=api_key)
-            self.llm = genai.GenerativeModel('gemini-1.5-flash')
+            self.llm = genai.GenerativeModel('gemini-3.5-flash')
             print("[PHASE] REM Phase (Gemini LLM Sandbox) Initialized.")
         else:
             self.llm = None

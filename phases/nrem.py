@@ -1,7 +1,7 @@
 import numpy as np
 
 class NREMPhase:
-    def __init__(self, cognigraph, hebbian_threshold=0.6):
+    def __init__(self, cognigraph, hebbian_threshold=0.3):
         """
         Executes structural consolidation and synaptic homeostatic regularization.
         """
