@@ -1,5 +1,4 @@
 import os
-# CRITICAL FIX: Prevent PyTorch from clashing with Uvicorn asyncio on Windows
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -10,45 +9,40 @@ from fastapi import FastAPI
 import requests
 from memory.episodic_buffer import EpisodicBuffer
 from sentence_transformers import SentenceTransformer
+from pydantic import BaseModel
+from typing import List
 
 app = FastAPI(title="SCNS Edge - Agent Wake Node")
 buffer = EpisodicBuffer()
 
-# 1. Load the real embedding model into Edge memory
 print("\n[EDGE] 🧠 Loading deep learning embedding model (all-MiniLM-L6-v2)...")
 encoder = SentenceTransformer('all-MiniLM-L6-v2')
 print("[EDGE] ✅ Model loaded and ready.")
 
-CLOUD_URL = "http://localhost:8080/trigger_sleep"
+CLOUD_URL = "http://cloud_node:8080/trigger_sleep"
+
+# Define the dynamic data structure for the benchmark
+class Episode(BaseModel):
+    text: str
+    tags: List[str]
 
 @app.post("/simulate_day")
-def simulate_day():
-    print("\n[EDGE] ☀️ Waking up. Gathering daily episodes...")
-    
-    # Raw textual events (no more hardcoded math vectors)
-    events = [
-        ("User dropped the glass.", ["physics"]),
-        ("Glass shattered on floor.", ["physics", "damage"]),
-        ("User dropped the glass.", ["physics"]) # The paradox
-    ]
-    
-    # 2. Dynamically encode text into 384-dimensional semantic vectors
-    for text, tags in events:
-        real_vector = encoder.encode(text).tolist()
-        buffer.add_episode(text, real_vector, tags)
-        print(f"       -> Encoded & Buffered: '{text}' (Vector Size: {len(real_vector)})")
-    
-    return {"status": "Day complete, real vectors buffered."}
+def simulate_day(episodes: List[Episode]):
+    print(f"\n[EDGE] ☀️ Waking up. Processing {len(episodes)} dynamic episodes...")
+    for ep in episodes:
+        real_vector = encoder.encode(ep.text).tolist()
+        buffer.add_episode(ep.text, real_vector, ep.tags)
+        
+    return {"status": f"Day complete, {len(episodes)} vectors buffered."}
 
 @app.post("/initiate_sync")
 def initiate_sync():
     print("\n[EDGE] 🔋 Battery low / Day ended. Initiating Cloud Sync...")
     
-    episodes = buffer.collection.get(include=['documents', 'embeddings', 'metadatas'])
-    
+    episodes = buffer.get_all_episodes()
     payload = {
         "agent_id": "Edge_Drone_Alpha",
-        "episodes": episodes['documents'] 
+        "episodes": episodes 
     }
     
     try:
@@ -57,18 +51,12 @@ def initiate_sync():
         if response.status_code == 200:
             cloud_data = response.json()
             print(f"[EDGE] 📥 Downloaded verified logic rules from Cloud:")
-            for rule in cloud_data['consolidated_rules']:
+            for rule in cloud_data.get('consolidated_rules', []):
                 print(f"       {rule}")
             
-            # 3. Physically wipe the short-term buffer for the next day
-            # (Assuming clear_buffer() or similar logic handles deletion in episodic_buffer.py)
-            buffer.client.delete_collection("wake_episodes")
-            buffer.collection = buffer.client.get_or_create_collection(
-                name="wake_episodes",
-                metadata={"hnsw:space": "cosine"}
-            )
+            buffer.clear_buffer() 
             print("[EDGE] 🧹 Local buffer cleared. Ready for a new day.")
-            return {"status": "Sync successful", "rules_added": cloud_data['consolidated_rules']}
+            return {"status": "Sync successful", "rules_added": cloud_data.get('consolidated_rules', [])}
             
     except requests.exceptions.ConnectionError:
         print("[EDGE] ❌ ERROR: Could not connect to Cloud. Sleep delayed.")

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: scns_user
+      POSTGRES_PASSWORD: securepassword
+      POSTGRES_DB: scns_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  cloud_node:
+    build:
+      context: .
+      dockerfile: Dockerfile.cloud
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Allows connection to local Ollama
+
+  edge_node:
+    build:
+      context: .
+      dockerfile: Dockerfile.edge
+    depends_on:
+      - db
+      - cloud_node
+    # We do NOT expose ports directly here because Nginx will handle the traffic
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - edge_node
+
+volumes:
+  pgdata:

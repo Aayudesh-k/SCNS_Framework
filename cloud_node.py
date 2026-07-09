@@ -29,7 +29,7 @@ class NREMGraphBuilder:
 class REMSandbox:
     def __init__(self, nrem_graph):
         self.knowledge_graph = nrem_graph
-        self.ollama_url = "http://localhost:11434/api/generate"
+        self.ollama_url = "http://host.docker.internal:11434/api/generate"
         
     def validate_and_prune(self, candidate_rules):
         print("\n[REM]  💭 Entering Active Dreaming Sandbox (Local LLM Validation)...")

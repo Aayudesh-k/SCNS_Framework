@@ -1,0 +1,7 @@
+scns_env/
+.venv/
+venv/
+__pycache__/
+*.pyc
+chroma_db/
+.git/
