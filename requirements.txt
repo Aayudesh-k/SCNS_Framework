@@ -5,3 +5,5 @@ networkx
 sentence-transformers
 psycopg2-binary
 pgvector
+openai
+google-genai

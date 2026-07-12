@@ -19,7 +19,9 @@ services:
     ports:
       - "8080:8080"
     extra_hosts:
-      - "host.docker.internal:host-gateway" # Allows connection to local Ollama
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
 
   edge_node:
     build:

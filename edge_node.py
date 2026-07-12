@@ -21,7 +21,6 @@ print("[EDGE] ✅ Model loaded and ready.")
 
 CLOUD_URL = "http://cloud_node:8080/trigger_sleep"
 
-# Define the dynamic data structure for the benchmark
 class Episode(BaseModel):
     text: str
     tags: List[str]
@@ -32,17 +31,17 @@ def simulate_day(episodes: List[Episode]):
     for ep in episodes:
         real_vector = encoder.encode(ep.text).tolist()
         buffer.add_episode(ep.text, real_vector, ep.tags)
-        
     return {"status": f"Day complete, {len(episodes)} vectors buffered."}
 
 @app.post("/initiate_sync")
-def initiate_sync():
-    print("\n[EDGE] 🔋 Battery low / Day ended. Initiating Cloud Sync...")
+def initiate_sync(provider: str = "ollama"):
+    print(f"\n[EDGE] 🔋 Battery low. Initiating Cloud Sync with {provider.upper()}...")
     
     episodes = buffer.get_all_episodes()
     payload = {
         "agent_id": "Edge_Drone_Alpha",
-        "episodes": episodes 
+        "episodes": episodes,
+        "provider": provider
     }
     
     try:

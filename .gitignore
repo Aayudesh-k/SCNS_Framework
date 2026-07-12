@@ -12,3 +12,5 @@ __pycache__/
 .ollama/
 
 *.csv
+.png
+.env
