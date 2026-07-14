@@ -33,34 +33,42 @@ The SCNS framework operates in three discrete asynchronous phases:
 
 ### Installation & Execution
 
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/YourUsername/SCNS-Framework.git](https://github.com/YourUsername/SCNS-Framework.git)
-   cd SCNS-Framework
-Create a .env file in the root directory and add your LLM API keys:
+**Step 1: Clone the repository**
+```bash
+git clone [https://github.com/Aayudesh-k/SCNS-Framework.git](https://github.com/Aayudesh-k/SCNS-Framework.git)
+cd SCNS-Framework
+```
 
-Code snippet
+**Step 2: Configure Environment Variables**
+Create a `.env` file in the root directory and add your LLM API keys:
+```env
 OPENAI_API_KEY=your_key_here
 GEMINI_API_KEY=your_key_here
+```
+
+**Step 3: Launch the Architecture**
 Build and launch the multi-container architecture (Edge Node, Cloud Node, and PostgreSQL databases):
-
-Bash
+```bash
 docker-compose up --build -d
-Run the full enterprise benchmark suite to test continuous learning and paradox pruning:
+```
 
-Bash
+**Step 4: Execute Benchmarks**
+Run the full enterprise benchmark suite to test continuous learning and paradox pruning:
+```bash
 python run_benchmark.py
-Legal and Patent Notice
+```
+
+## Legal and Patent Notice
 This framework, including the asynchronous triphasic architecture, paradox pruning algorithms, and structural graph extraction methodologies, is protected by a pending U.S. patent.
 
-U.S. Patent Pending, App. No. 64/110,991
+**U.S. Patent Pending, App. No. 64/110,991**
 
-Licensing and Commercial Use
-This framework is open-sourced under the GNU Affero General Public License v3.0 (AGPLv3).
+## Licensing and Commercial Use
+This framework is open-sourced under the **GNU Affero General Public License v3.0 (AGPLv3)**.
 
 Because this architecture involves network-connected microservices (Edge and Cloud Nodes), any modifications, integrations, or deployments used over a network must also be open-sourced in accordance with the strict provisions of the AGPLv3.
 
-Commercial Licensing
+### Commercial Licensing
 If you are a corporate entity, defense contractor, or startup intending to integrate the SCNS Framework into a proprietary, closed-source production environment (such as proprietary robotic control software or commercial edge hardware), you must obtain a commercial license.
 
 For commercial licensing and enterprise support inquiries, please contact: a2kaparthi@gmail.com
