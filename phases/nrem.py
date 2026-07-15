@@ -15,7 +15,7 @@ class NREMPhase:
         """
         episodes = self.cognigraph.episodic.get_recent_episodes()
         
-        # FIXED: Explicitly check for None or length 0 to avoid NumPy truth value ambiguity
+        # Explicitly check for None or length 0 to avoid NumPy truth value ambiguity
         if episodes is None or episodes.get('embeddings') is None or len(episodes['embeddings']) == 0:
             print("[NREM] No episodes to consolidate.")
             return
