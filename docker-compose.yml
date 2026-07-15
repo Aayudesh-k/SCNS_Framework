@@ -30,7 +30,6 @@ services:
     depends_on:
       - db
       - cloud_node
-    # We do NOT expose ports directly here because Nginx will handle the traffic
 
   nginx:
     image: nginx:latest
